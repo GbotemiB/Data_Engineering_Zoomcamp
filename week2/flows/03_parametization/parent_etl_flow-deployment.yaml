@@ -1,0 +1,56 @@
+###
+### A complete description of a Prefect Deployment for flow 'parent-etl-flow'
+###
+name: parameterized ETL
+description: parent flow for web to gcs
+version: 5858c359f8d0eaf19edaeecc3cb77b85
+# The work queue that will handle this deployment's runs
+work_queue_name: default
+tags: []
+parameters: {}
+schedule: null
+infra_overrides: {}
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  working_dir: null
+  block_type_slug: process
+  _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: parent-etl-flow
+manifest_path: null
+storage: null
+path: /home/gbotemi/Documents/DataEngZoomcamp/week2/flows/03_parametization
+entrypoint: parameterized_flow.py:parent_etl_flow
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties:
+    months:
+      title: months
+      default:
+      - 1
+      - 2
+      position: 0
+      type: array
+      items:
+        type: integer
+    year:
+      title: year
+      default: 2021
+      position: 1
+      type: integer
+    color:
+      title: color
+      default: yellow
+      position: 2
+      type: string
+  required: null
+  definitions: null
