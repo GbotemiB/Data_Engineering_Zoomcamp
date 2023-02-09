@@ -29,21 +29,17 @@ def preprocess(data: pd.DataFrame) -> pd.DataFrame:
 def save_to_local(data: pd.DataFrame, color: str, dataset_file: str) -> Path:
     """ This will dave data to local"""
 
-    path = Path(f"data/{color}/{dataset_file}.csv")
+    path = Path(f"data/{color}/{dataset_file}.parquet")
     data.to_csv(path, compression="gzip")
     print ("successfully saved to local")
     return path
 
 
-def git_storage():
-    return None
-    
-
 @task(log_prints=True)
 def save_to_gcs(path: Path) -> None:
     """ This will save data to google cloud storage bucket"""
 
-    gcp_cloud_storage_bucket_block = GcsBucket.load("de-gcs")
+    gcp_cloud_storage_bucket_block = GcsBucket.load("   ")
     gcp_cloud_storage_bucket_block.upload_from_path(
         from_path=f"{path}",
         to_path=path
@@ -66,7 +62,7 @@ def etl_web_to_gcs(color: str, year: int, month: int) -> None:
     return 
 
 @flow(retries=1)
-def parent_flow(color: str, months: list[int], year: int) -> None:
+def parent_flow(color: str="green", months: list[int]=[11], year: int=[2020]) -> None:
     """this is the parent flow for elt web to gcs"""
 
     for month in months:
@@ -76,7 +72,7 @@ def parent_flow(color: str, months: list[int], year: int) -> None:
 
 
 if __name__=="__main__":
-    Color = "yellow"
-    Year = 2021
-    Month = [1,2]
+    Color = "green"
+    Year = 2020
+    Month = [11]
     parent_flow(color=Color, months=Month, year=Year)
