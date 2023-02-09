@@ -1,21 +1,21 @@
 ###
 ### A complete description of a Prefect Deployment for flow 'parent-gcs-to-bq'
 ###
-name: gcs to bq deployment
+name: gcs to bq with github
 description: 'parent flow for gcs to BQ '
-version: 09a959fdd35168603fe5af20dea64ade
+version: 4a5bc85ef917272b5ea2e58567ab59a1
 # The work queue that will handle this deployment's runs
 work_queue_name: default
-work_pool_name: null
-work_pool_queue_name: null
 tags: []
-parameters: {
-  "year": 2019,
-  "months": [2,3],
-  "color": "yellow"
-}
+parameters: {}
 schedule: null
 infra_overrides: {}
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: parent-gcs-to-bq
+manifest_path: null
 infrastructure:
   type: process
   env: {}
@@ -24,16 +24,21 @@ infrastructure:
   command: null
   stream_output: true
   working_dir: null
+  _block_document_id: 5a842fc6-0cf7-4140-8f59-29c28f2da70e
+  _block_document_name: anonymous-a1ae6281-4b66-4012-a346-6e97a9718b7d
+  _is_anonymous: true
   block_type_slug: process
   _block_type_slug: process
-
-###
-### DO NOT EDIT BELOW THIS LINE
-###
-flow_name: parent-gcs-to-bq
-manifest_path: null
-storage: null
-path: /home/gbotemi/Documents/DataEngZoomcamp/week2/assignment
+storage:
+  repository: https://github.com/GbotemiB/Data_Engineering_Zoomcamp/week2/assignment
+  reference: null
+  access_token: null
+  _block_document_id: 8d52d728-0fed-4523-bbbd-1ac35d7fb72a
+  _block_document_name: dataeng-git
+  _is_anonymous: false
+  block_type_slug: github
+  _block_type_slug: github
+path: ''
 entrypoint: etl_gcs_to_bq.py:parent_gcs_to_bq
 parameter_openapi_schema:
   title: Parameters
@@ -41,7 +46,7 @@ parameter_openapi_schema:
   properties:
     color:
       title: color
-      default: Green
+      default: yellow
       position: 0
       type: string
     months:
@@ -60,4 +65,3 @@ parameter_openapi_schema:
       type: integer
   required: null
   definitions: null
-timestamp: '2023-02-08T00:06:06.654866+00:00'

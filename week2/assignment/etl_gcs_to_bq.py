@@ -5,6 +5,10 @@ from prefect_gcp.cloud_storage import GcsBucket
 from prefect_gcp import GcpCredentials
 from prefect.tasks import task_input_hash
 from datetime import timedelta
+from prefect.filesystems import GitHub
+
+#github_block = GitHub.load("dataeng-git")
+#github_block.get_directory(from_path="week2/assignment/etl_gcs_to_bq.py", local_path="../flows/")
 
 @task(log_prints=True)#, cache_key_fn=task_input_hash, cache_expiration=timedelta(days=1))
 def get_data_from_gcs(color: str, year: int, month: int) -> Path:
@@ -53,7 +57,7 @@ def gcs_to_bq(color: str, year: int, month: int) -> int:
     return len_of_row
 
 @flow()
-def parent_gcs_to_bq(color: str="Green", months: list[int]=[1,2], year: int=2021) -> None:
+def parent_gcs_to_bq(color: str="yellow", months: list[int]=[1,2], year: int=2021) -> None:
     """parent flow for gcs to BQ """
     rows_processed = 0
     for month in months:
