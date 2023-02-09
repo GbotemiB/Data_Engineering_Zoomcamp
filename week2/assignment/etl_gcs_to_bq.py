@@ -10,25 +10,30 @@ from datetime import timedelta
 def get_data_from_gcs(color: str, year: int, month: int) -> Path:
     """ This functions fetches data from gcs"""
 
-    gcs_path = f"data/{color}/{color}_tripdata_{year}-{month:02}.parquet"
+    gcs_path = f"data/{color}/{color}_tripdata_{year}-{month:02}.csv"
     gcp_block = GcsBucket.load("de-gcs")
     gcp_block.get_directory(from_path=gcs_path, local_path=f"../data/")
+    print(f"this is the path: {Path(gcs_path)}")
     return Path(gcs_path)
 
-@task()
+@task(log_prints=True)
 def load_data(path: Path) -> pd.DataFrame:
-    """ This function load the file in the gcs path and converts it to a parquet file"""
-
-    data = pd.read_parquet(path)
+    """ This function load the file in the gcs path and converts it to a csv file"""
+    print("data loading started")
+    data = pd.read_csv(path, compression="gzip")
+    data["tpep_pickup_datetime"] = pd.to_datetime(data["tpep_pickup_datetime"])
+    data["tpep_dropoff_datetime"] = pd.to_datetime(data["tpep_dropoff_datetime"])
+    data.drop(columns=["Unnamed: 0"], axis=0, inplace=True)
+    print(data.dtypes)
     return data
 
 @task(log_prints=True, retries=3)
 def write_to_bq(data: pd.DataFrame) -> None:
     """ This functions writes data to big query"""
-    gcp_credentials_block = GcpCredentials.load("gcp-creds")
+    gcp_credentials_block = GcpCredentials.load("gcp-cred")
     
     data.to_gbq(
-        destination_table="de_taxi.rides",
+        destination_table="de_taxi.nyc",
         project_id="dataeng-375609",
         chunksize=100000,
         if_exists='append',
@@ -50,18 +55,18 @@ def gcs_to_bq(color: str, year: int, month: int) -> int:
 @flow()
 def parent_gcs_to_bq(color: str="Green", months: list[int]=[1,2], year: int=2021) -> None:
     """parent flow for gcs to BQ """
-    rows_processed = []
+    rows_processed = 0
     for month in months:
         rows = gcs_to_bq(color=color, month=month, year=year)
-        rows_processed.append(rows)
+        rows_processed += rows
     print(f"rows processed: {rows_processed}")
 
 
 
 if __name__=="__main__":
     color = "yellow"
-    months = [2,3]
-    year = 2020
+    months = [1,2]
+    year = 2021
     parent_gcs_to_bq(color=color, year=year, months=months)
 
 """
