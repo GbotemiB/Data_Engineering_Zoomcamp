@@ -4,10 +4,11 @@ from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
 from datetime import timedelta
 from prefect.tasks import task_input_hash
+from prefect.filesystems import GitHub
 
 
 
-@task(log_prints=True, cache_key_fn=task_input_hash, cache_expiration=timedelta(days=1))
+@task(log_prints=True, cache_key_fn=task_input_hash, cache_expiration=timedelta(hours=1))
 def fetch_data(url: str) -> pd.DataFrame:
     """ This Fetch data from url and convert it to dataframe"""
     data = pd.read_parquet(url)
@@ -17,8 +18,8 @@ def fetch_data(url: str) -> pd.DataFrame:
 @task(log_prints=True)
 def preprocess(data: pd.DataFrame) -> pd.DataFrame:
     """ This handles and preprocess the data into a usable format"""
-    data['lpep_pickup_datetime'] = pd.to_datetime(data['lpep_pickup_datetime'])
-    data['lpep_dropoff_datetime'] = pd.to_datetime(data['lpep_dropoff_datetime'])
+    data['tpep_pickup_datetime'] = pd.to_datetime(data['tpep_pickup_datetime'])
+    data['tpep_dropoff_datetime'] = pd.to_datetime(data['tpep_dropoff_datetime'])
     
     print(f"rows: {len(data)}")
     print("Preprocessing successful")
@@ -33,11 +34,16 @@ def save_to_local(data: pd.DataFrame, color: str, dataset_file: str) -> Path:
     print ("successfully saved to local")
     return path
 
+
+def git_storage():
+    return None
+    
+
 @task(log_prints=True)
 def save_to_gcs(path: Path) -> None:
     """ This will save data to google cloud storage bucket"""
 
-    gcp_cloud_storage_bucket_block = GcsBucket.load("dataeng-bucket")
+    gcp_cloud_storage_bucket_block = GcsBucket.load("de-gcs")
     gcp_cloud_storage_bucket_block.upload_from_path(
         from_path=f"{path}",
         to_path=path
@@ -45,7 +51,7 @@ def save_to_gcs(path: Path) -> None:
 
     return "Successfully saved to GCS"
 
-@flow(retries=3)
+@flow(retries=1)
 def etl_web_to_gcs(color: str, year: int, month: int) -> None:
     """This is the main function"""
 
@@ -59,7 +65,7 @@ def etl_web_to_gcs(color: str, year: int, month: int) -> None:
 
     return 
 
-@flow(retries=3)
+@flow(retries=1)
 def parent_flow(color: str, months: list[int], year: int) -> None:
     """this is the parent flow for elt web to gcs"""
 
@@ -71,6 +77,6 @@ def parent_flow(color: str, months: list[int], year: int) -> None:
 
 if __name__=="__main__":
     Color = "yellow"
-    Year = 2019
-    Month = [2,3]
+    Year = 2021
+    Month = [1,2]
     parent_flow(color=Color, months=Month, year=Year)
