@@ -18,8 +18,8 @@ def fetch_data(url: str) -> pd.DataFrame:
 @task(log_prints=True)
 def preprocess(data: pd.DataFrame) -> pd.DataFrame:
     """ This handles and preprocess the data into a usable format"""
-    data['tpep_pickup_datetime'] = pd.to_datetime(data['tpep_pickup_datetime'])
-    data['tpep_dropoff_datetime'] = pd.to_datetime(data['tpep_dropoff_datetime'])
+    data['lpep_pickup_datetime'] = pd.to_datetime(data['lpep_pickup_datetime'])
+    data['lpep_dropoff_datetime'] = pd.to_datetime(data['lpep_dropoff_datetime'])
     
     print(f"rows: {len(data)}")
     print("Preprocessing successful")
