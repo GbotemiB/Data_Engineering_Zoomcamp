@@ -39,7 +39,7 @@ def save_to_local(data: pd.DataFrame, color: str, dataset_file: str) -> Path:
 def save_to_gcs(path: Path) -> None:
     """ This will save data to google cloud storage bucket"""
 
-    gcp_cloud_storage_bucket_block = GcsBucket.load("   ")
+    gcp_cloud_storage_bucket_block = GcsBucket.load("de-gcs")
     gcp_cloud_storage_bucket_block.upload_from_path(
         from_path=f"{path}",
         to_path=path
@@ -62,7 +62,7 @@ def etl_web_to_gcs(color: str, year: int, month: int) -> None:
     return 
 
 @flow(retries=1)
-def parent_flow(color: str="green", months: list[int]=[11], year: int=[2020]) -> None:
+def parent_flow(color: str="green", months: list[int]=[11], year: int=2020) -> None:
     """this is the parent flow for elt web to gcs"""
 
     for month in months:

@@ -1,0 +1,67 @@
+###
+### A complete description of a Prefect Deployment for flow 'parent-flow'
+###
+name: web_gcs_github
+description: this is the parent flow for elt web to gcs
+version: 41b6b498adba2f6e44d4e0e65c2f393d
+# The work queue that will handle this deployment's runs
+work_queue_name: default
+work_pool_name: null
+tags: []
+parameters: {}
+schedule: null
+is_schedule_active: null
+infra_overrides: {}
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  working_dir: null
+  block_type_slug: process
+  _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: parent-flow
+manifest_path: null
+storage:
+  repository: https://github.com/GbotemiB/Data_Engineering_Zoomcamp/
+  reference: main
+  access_token: null
+  include_git_objects: true
+  _block_document_id: 966c0f20-b9d5-4903-8e3e-083522a2c5df
+  _block_document_name: dataeng-git
+  _is_anonymous: false
+  block_type_slug: github
+  _block_type_slug: github
+path: ''
+entrypoint: week2/assignment/etl_web_to_gcs.py:parent_flow
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties:
+    color:
+      title: color
+      default: green
+      position: 0
+      type: string
+    months:
+      title: months
+      default:
+      - 11
+      position: 1
+      type: array
+      items:
+        type: integer
+    year:
+      title: year
+      default: 2020
+      position: 2
+      type: integer
+  required: null
+  definitions: null
+timestamp: '2023-02-10T01:01:38.579214+00:00'
