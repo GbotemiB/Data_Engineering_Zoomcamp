@@ -5,6 +5,8 @@ from prefect_gcp.cloud_storage import GcsBucket
 from datetime import timedelta
 from prefect.tasks import task_input_hash
 from prefect.filesystems import GitHub
+from prefect.filesystems import LocalFileSystem
+
 
 
 
@@ -28,6 +30,9 @@ def preprocess(data: pd.DataFrame) -> pd.DataFrame:
 @task(log_prints=True)
 def save_to_local(data: pd.DataFrame, color: str, dataset_file: str) -> Path:
     """ This will dave data to local"""
+
+    local_file_system_block = LocalFileSystem.load("local-path")
+    local_file_system_block.get_directory()
 
     path = Path(f"data/{color}/{dataset_file}.parquet")
     data.to_csv(path, compression="gzip")
