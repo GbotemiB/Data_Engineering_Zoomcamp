@@ -13,9 +13,9 @@ def fetch(url: str) -> pd.DataFrame:
 @task(log_prints=True)
 def clean(df: pd.DataFrame) -> pd.DataFrame:
     """Fix dtype issues"""
-    print(df.dtypes)
+    print(df.dtypes) 
     df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'])
-    df['dropoff_datetime'] = pd.to_datetime(df['dropoff_datetime'])
+    df['dropOff_datetime'] = pd.to_datetime(df['dropOff_datetime'])
 
 
     print(df.head(2))
@@ -56,6 +56,6 @@ if __name__=="__main__":
     
     month = 1
     while month <= 12:
-        etl_web_to_gcs(year=2020, month=month)
+        etl_web_to_gcs(year=2019, month=month)
         month += 1
     
