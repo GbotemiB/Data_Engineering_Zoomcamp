@@ -1,21 +1,17 @@
 ###
-### A complete description of a Prefect Deployment for flow 'parent-gcs-to-bq'
+### A complete description of a Prefect Deployment for flow 'parent-flow'
 ###
-name: gcs to bq with github
-description: 'parent flow for gcs to BQ '
-version: 4a5bc85ef917272b5ea2e58567ab59a1
+name: parameterized web to gcs
+description: this is the parent flow for elt web to gcs
+version: a99cec2f6712614b70135e63b8519f22
 # The work queue that will handle this deployment's runs
 work_queue_name: default
+work_pool_name: null
 tags: []
 parameters: {}
 schedule: null
+is_schedule_active: null
 infra_overrides: {}
-
-###
-### DO NOT EDIT BELOW THIS LINE
-###
-flow_name: parent-gcs-to-bq
-manifest_path: null
 infrastructure:
   type: process
   env: {}
@@ -24,22 +20,26 @@ infrastructure:
   command: null
   stream_output: true
   working_dir: null
-  _block_document_id: 5a842fc6-0cf7-4140-8f59-29c28f2da70e
-  _block_document_name: anonymous-a1ae6281-4b66-4012-a346-6e97a9718b7d
-  _is_anonymous: true
   block_type_slug: process
   _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: parent-flow
+manifest_path: null
 storage:
-  repository: https://github.com/GbotemiB/Data_Engineering_Zoomcamp/week2/assignment
+  repository: https://github.com/GbotemiB/Data_Engineering_Zoomcamp/
   reference: null
   access_token: null
-  _block_document_id: 8d52d728-0fed-4523-bbbd-1ac35d7fb72a
+  include_git_objects: true
+  _block_document_id: 4409301f-624a-49cf-a7a5-c5bace793732
   _block_document_name: dataeng-git
   _is_anonymous: false
   block_type_slug: github
   _block_type_slug: github
 path: ''
-entrypoint: etl_gcs_to_bq.py:parent_gcs_to_bq
+entrypoint: week2/assignment/etl_web_to_gcs.py:parent_flow
 parameter_openapi_schema:
   title: Parameters
   type: object
@@ -60,8 +60,9 @@ parameter_openapi_schema:
         type: integer
     year:
       title: year
-      default: 2021
+      default: 2020
       position: 2
       type: integer
   required: null
   definitions: null
+timestamp: '2023-02-15T02:15:23.295118+00:00'

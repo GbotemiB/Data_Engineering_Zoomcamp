@@ -5,12 +5,11 @@ from prefect_gcp.cloud_storage import GcsBucket
 from datetime import timedelta
 from prefect.tasks import task_input_hash
 from prefect.filesystems import GitHub
-from prefect.filesystems import LocalFileSystem
 
 
 
 
-@task(log_prints=True, cache_key_fn=task_input_hash, cache_expiration=timedelta(hours=1))
+@task(log_prints=True)
 def fetch_data(url: str) -> pd.DataFrame:
     """ This Fetch data from url and convert it to dataframe"""
     data = pd.read_parquet(url)
@@ -20,8 +19,12 @@ def fetch_data(url: str) -> pd.DataFrame:
 @task(log_prints=True)
 def preprocess(data: pd.DataFrame) -> pd.DataFrame:
     """ This handles and preprocess the data into a usable format"""
-    data['lpep_pickup_datetime'] = pd.to_datetime(data['lpep_pickup_datetime'])
-    data['lpep_dropoff_datetime'] = pd.to_datetime(data['lpep_dropoff_datetime'])
+    if data.columns[1] == 'lpep_pickup_datetime':
+        data['lpep_pickup_datetime'] = pd.to_datetime(data['lpep_pickup_datetime'])
+        data['lpep_dropoff_datetime'] = pd.to_datetime(data['lpep_dropoff_datetime'])
+    else:
+        data['tpep_pickup_datetime'] = pd.to_datetime(data['tpep_pickup_datetime'])
+        data['tpep_dropoff_datetime'] = pd.to_datetime(data['tpep_dropoff_datetime'])
     
     print(f"rows: {len(data)}")
     print("Preprocessing successful")
@@ -30,9 +33,6 @@ def preprocess(data: pd.DataFrame) -> pd.DataFrame:
 @task(log_prints=True)
 def save_to_local(data: pd.DataFrame, color: str, dataset_file: str) -> Path:
     """ This will dave data to local"""
-
-    local_file_system_block = LocalFileSystem.load("local-path")
-    local_file_system_block.get_directory()
 
     path = Path(f"data/{color}/{dataset_file}.parquet")
     data.to_csv(path, compression="gzip")
@@ -52,7 +52,7 @@ def save_to_gcs(path: Path) -> None:
 
     return "Successfully saved to GCS"
 
-@flow(retries=1)
+@flow()
 def etl_web_to_gcs(color: str, year: int, month: int) -> None:
     """This is the main function"""
 
@@ -66,8 +66,8 @@ def etl_web_to_gcs(color: str, year: int, month: int) -> None:
 
     return 
 
-@flow(retries=1)
-def parent_flow(color: str="green", months: list[int]=[11], year: int=2020) -> None:
+@flow()
+def parent_flow(color: str="yellow", months: list[int]=[1,2], year: int=2020) -> None:
     """this is the parent flow for elt web to gcs"""
 
     for month in months:
