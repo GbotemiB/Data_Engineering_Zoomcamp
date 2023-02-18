@@ -21,6 +21,7 @@ select
 
     cast(trip_distance as integer) as trip_distance,
     store_and_fwd_flag,
+    cast(0 as numeric) as trip_type,
     cast(payment_type as integer) as payment_type,
     {{ get_payment_type_description('payment_type') }} as payment_type_description,
 

@@ -30,6 +30,7 @@ select
     cast(tolls_amount as numeric) as tolls_amount,
     cast(improvement_surcharge as numeric) as improvement_surcharge,
     cast(total_amount as numeric) as total_amount,
+    cast(trip_type as integer) as trip_type,
     cast(congestion_surcharge as numeric) as congestion_surcharge,
 
 
