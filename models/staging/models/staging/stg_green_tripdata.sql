@@ -1,18 +1,17 @@
-{{ config(materialized='view') }}
+{{ config(materialized="view") }}
 
-with tripdata as 
-(
-    select *,
-        row_number() over(partition by vendorid, tpep_pickup_datetime) as rn
-    from {{ source('staging', 'green_tripdata') }}
-    where vendorid is not null
-)
+with
+    tripdata as (
+        select *, row_number() over (partition by vendorid, lpep_pickup_datetime) as rn
+        from {{ source("staging", "green_tripdata") }}
+        where vendorid is not null
+    )
 
-select 
-    {{ dbt_utils.surrogate_key(['vendorid', 'tpep_pickup_datetime']) }} as trip_id,
+select
+    {{ dbt_utils.surrogate_key(["vendorid", "lpep_pickup_datetime"]) }} as trip_id,
     cast(vendorid as integer) as vendorid,
     cast(ratecodeid as integer) as ratecodeid,
-    cast(pulocationid as integer) as  pickup_locationid,
+    cast(pulocationid as integer) as pickup_locationid,
     cast(dolocationid as integer) as dropoff_locationid,
 
     cast(lpep_pickup_datetime as timestamp) as pickup_time,
@@ -22,7 +21,7 @@ select
     cast(trip_distance as integer) as trip_distance,
     store_and_fwd_flag,
     cast(payment_type as integer) as payment_type,
-    {{ get_payment_type_description('payment_type') }} as payment_type_description,
+    {{ get_payment_type_description("payment_type") }} as payment_type_description,
 
     cast(fare_amount as numeric) as fare_amount,
     cast(extra as numeric) as extra,
@@ -37,9 +36,5 @@ select
 from tripdata
 where rn = 1
 
---dbt build --m <model.sql> --var 'is_test_run: false'
-{% if var('is_test_run', default=true) %}
-
-    limit 100
-
-{% endif %}
+-- dbt build --m <model.sql> --var 'is_test_run: false'
+{% if var("is_test_run", default=true) %} limit 100 {% endif %}
