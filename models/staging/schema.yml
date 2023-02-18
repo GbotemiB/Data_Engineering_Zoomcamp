@@ -9,6 +9,13 @@ sources:
       - name: green_tripdata
       - name: yellow_tripdata 
 
+  - name: staging_fhv
+    database: dataeng-375609
+    schema: fhv_data
+
+    tables:
+      - name: fhv_2019
+
 models:
     - name: stg_green_tripdata
       description: >
