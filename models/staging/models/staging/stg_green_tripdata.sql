@@ -4,7 +4,7 @@ with tripdata as
 (
     select *,
         row_number() over(partition by vendorid, tpep_pickup_datetime) as rn
-    from {{ source('staging', 'nyc') }}
+    from {{ source('staging', 'green_tripdata') }}
     where vendorid is not null
 )
 
@@ -15,8 +15,8 @@ select
     cast(pulocationid as integer) as  pickup_locationid,
     cast(dolocationid as integer) as dropoff_locationid,
 
-    cast(tpep_pickup_datetime as timestamp) as pickup_time,
-    cast(tpep_dropoff_datetime as timestamp) as dropoff_time,
+    cast(lpep_pickup_datetime as timestamp) as pickup_time,
+    cast(lpep_dropoff_datetime as timestamp) as dropoff_time,
     cast(passenger_count as integer) as passenger_count,
 
     cast(trip_distance as integer) as trip_distance,

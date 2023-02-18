@@ -3,11 +3,11 @@ version: 2
 sources:
   - name: staging
     database: dataeng-375609
-    schema: de_taxi
+    schema: nyc_dataset
 
     tables:
-      - name: nyc
-      - name: rides 
+      - name: green_tripdata
+      - name: yellow_tripdata 
 
 models:
     - name: stg_green_tripdata
